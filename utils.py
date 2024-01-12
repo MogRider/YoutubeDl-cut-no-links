@@ -82,10 +82,6 @@ class Utils:
     def tmnow(self,st: float):
         return self.convsec(time.time() - st)    
 
-    @staticmethod    
-    def latest_file(dir):
-        return [[os.path.join(dir, i), os.path.getmtime(
-        os.path.join(dir, i))] for i in os.listdir(dir)][-1][0]
     @staticmethod
     def merge_dicos(dico,*dicos,subdict=True):
         """
