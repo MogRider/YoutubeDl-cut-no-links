@@ -20,13 +20,14 @@ class Utils:
         self.change_keys = None
         
     @staticmethod
+    #[o/n/c]
     def printValidation(ckw):
         print('['+Fore.GREEN,'o',Style.RESET_ALL,'/',Fore.RED,'n',Style.RESET_ALL,'/'+ckw+']',sep='')
         
     def printColor(self,color,*args,end='\n'):
         print(self.colors[color],*args,Style.RESET_ALL,end=end)
     
-        # enlever les doublons d une liste
+    # enlever les doublons d une liste
     @staticmethod
     def removeDb(liste):
         filt = []
@@ -36,7 +37,7 @@ class Utils:
                 filt.append(item)
                 seen.add(item)
         return filt
-    # print en rouge
+    #copy dirs recursively
     @staticmethod
     def copytree(src: str, dst: str, symlinks=False, ignore=None) -> None:
         # copier un dossier
@@ -98,13 +99,16 @@ class Utils:
                 for clé in dic.keys():
                     dico[clé] = dic[clé]
         return dico
+    
     @staticmethod
     def parse_cut(query):
         start,end =  re.findall(r'\b(?:\d+:\d+:\d+|\d+(?::\d+)?(?::\d+)?)\b',query)[:2]
         return start,end
 
 utils = Utils()
+
 class PresqueUtiles:
+    
     @staticmethod
     def get_playlists(query):
         r = rq.get(f"https://www.youtube.com/results?search_query= \

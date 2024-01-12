@@ -50,14 +50,13 @@ class Playlist:
         """
         self.url = options['url']
         ydl_opts = {
-            'quiet': True,  # Désactiver la sortie console
-            'extract_flat': True,  # Récupérer toutes les URLs à plat
+            'quiet': True,  # No output
+            'extract_flat': True,  # Flats urls
         }
         content = {}
         with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(self.url, download=False)
         if 'entries' in info:
-            # Si la playlist contient des vidéos
             self.urls = [entry['url'] for entry in info['entries']]
         else:
             print("Aucune vidéo trouvée dans la playlist.")
@@ -78,16 +77,15 @@ class Downloaders:
         output_name = os.path.join(dir, video.title)
         video.options['outtmpl'] =  output_name
         with YoutubeDL(video.options) as ydl:
-            ydl.download([video.url])#path dans video.options
+            ydl.download([video.url])
         utils.printColor('v','Dowloaded %s'%video.title)
         if len(video.paths) > 1:
             for path in video.paths[1:]:
                 new = os.path.join(path,video.options['outtmpl']['default'].split('\\')[-1]+video.format)
-                shutil.copy(output_name+video.format, new)  # le copier dans le pc
+                shutil.copy(output_name+video.format, new)  # copy to other dirs
                 utils.printColor('v',"%s copiée dans %s"%(video.title,path.split('\\')[-1]))
 
     def download_playlist(self,playlist : Playlist):
-        #meme format option (url playlist)
         videos = playlist.urls
         for i in range (len(playlist.paths)):
             playlist.paths[i] =  os.path.join(playlist.paths[i],playlist.title)
@@ -110,7 +108,7 @@ class Downloaders:
 downloader = Downloaders()
 
 def playlist_bebou(query,options):
-    assert 'cut(' not in query, "peut pas cut une playlist (mdrrr t qui)"
+    assert 'cut(' not in query, "cannot cut playlist (mdrrr t qui)"
     if 'https' in query:
         playlists = [query,None]
     else:
@@ -124,7 +122,7 @@ def playlist_bebou(query,options):
         PLAYLISTS.append(Playlist(options))
         pl = PLAYLISTS[0]
         utils.printColor('j',"\t  %s - %s  ----- %d videos"%(pl.auth,pl.title,len(pl.urls)))
-        print("\n(prochaine ds la recherche : %s - %s "%(PLAYLISTS[1].auth,PLAYLISTS[1].title))
+        print("\n(next found : %s - %s "%(PLAYLISTS[1].auth,PLAYLISTS[1].title))
         print('\n\t\tDownload / go to next / change query',end='');utils.printValidation(CHANGE_KW)
         resp = str(input('>>>'))
         if resp == 'n':
@@ -159,9 +157,9 @@ def video_bebou(query,options):
         options['url'] = videos[i]
         VIDEOS.append(Video(options))
         vd = VIDEOS[0]
-        print('\n\n\n%s views - minia : %s'%(vd.views,vd.thumbnail))
+        print('\n\n\n%s views - thumbnail/minia : %s'%(vd.views,vd.thumbnail))
         utils.printColor('j',"\t  %s - %s"%(vd.auth,vd.title))
-        print('(prochaine dans la recherche : %s - %s)'%(VIDEOS[1].auth,VIDEOS[1].title))
+        print('(next found : %s - %s)'%(VIDEOS[1].auth,VIDEOS[1].title))
         print('\n\t\t Download/ go to next/ change query',end='');utils.printValidation(CHANGE_KW)
         resp = str(input('>>>'))
         if resp == 'n':
@@ -181,13 +179,13 @@ if __name__ == '__main__':
     
     audio_options = config['audio']
     video_options = config['video']
-    SEP = config['querySep']# % de base
+    SEP = config['querySep']# % base
     PLAYLIST_KW = config['playlistKW']
     VIDEO_KW = config['videoKW']#telecharge l'audio de base
     CHANGE_KW = config['newQueryKW']
     VIDEO_SAVE_DIRECTORIES = config['videoSaveDirs']# ex :local + un chemin vers drive
-    AUDIO_SAVE_DIRECTORIES = config['audioSaveDirs']# meme chose pour les audios
-    utils.forced = config['forceNames']# remplacer les espaces dans le fichier de sortie et enlever les #...
+    AUDIO_SAVE_DIRECTORIES = config['audioSaveDirs']
+    utils.forced = config['forceNames']# no spaces no #humour and shit stuff
     
     utils.printColor('v','\r\n%s'%CHANGE_KW, end='')
     print('             : to change query during dl')
@@ -198,7 +196,7 @@ if __name__ == '__main__':
     utils.printColor('v','\r%s'%VIDEO_KW, end='')
     print('        : video mp4')
     utils.printColor('v','\rcut', end='')
-    print('           :cut(h:m:s / h:m:s) query')# ex : cut( 10:0 / 1:11:14) inoxtag fortnite VIDEO_KW) pour telecharger le dernier live fortnite de Ines de la minute 10 à 1:11:14 de video (/ pas obligé))(gadget mais bon stylé ?)
+    print('           :cut(h:m:s / h:m:s) query')# ex : cut( 10:0 / 1:11:14) inoxtag fortnite VIDEO_KW) pour telecharger le dernier live fortnite de Ines de la minute 10 à 1:11:14 de video (/ pas obligé)
     utils.printColor('b','\n\tSearch for a Video | Enter URL')
     
     queries = str(input(">>>"))
