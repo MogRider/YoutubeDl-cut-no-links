@@ -219,3 +219,4 @@ if __name__ == '__main__':
         else:
             video_bebou(query,options)   
        
+print("Script finished in %d"%utils.tmnow(start))
