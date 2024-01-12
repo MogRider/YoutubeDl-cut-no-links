@@ -23,11 +23,13 @@
     "newQueryKW": "c",
     
     "audioSaveDirs": [
-        
+        "C:\\Users\\Julio\\Desktop\\fi\\sn",
+        "G:\\Mon Drive\\fi\\sn"
     ],
     
     "videoSaveDirs": [
-        
+        "C:\\Users\\Julio\\Desktop\\fi\\vd",
+        "G:\\Mon Drive\\fi\\vd"
     ],
     
     "forceNames" : false

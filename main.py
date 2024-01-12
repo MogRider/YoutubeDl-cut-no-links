@@ -9,6 +9,9 @@ from contextlib import suppress
 utils = Utils()
 dlUtils = PresqueUtiles()
 
+class BadVideo(Exception):
+    pass
+
 class Video:
 
     def __init__(self,options):
@@ -20,9 +23,11 @@ class Video:
         """
        
         self.url = options['url']
-        with YoutubeDL({'skip_download': True}) as ydl:
-            info = ydl.extract_info(self.url, download=False)
-        
+        try:
+            with YoutubeDL({'skip_download': True}) as ydl:
+                info = ydl.extract_info(self.url, download=False)
+        except Exception as e:
+            raise BadVideo((e,"unable to extract infos (bad video),skipping"))
         self.title = utils.check_letters(
             str(info.get('title')), ['/', '\\', '?', '*', '>', '<', '|'])
         self.auth = str(info.get('uploader'))
@@ -54,8 +59,11 @@ class Playlist:
             'extract_flat': True,  # Flats urls
         }
         content = {}
-        with YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(self.url, download=False)
+        try:    
+            with YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(self.url, download=False)
+        except Exception as e:
+            raise BadVideo((e,"unable to extract infos (bad video),skipping"))
         if 'entries' in info:
             self.urls = [entry['url'] for entry in info['entries']]
         else:
@@ -76,8 +84,11 @@ class Downloaders:
         dir = video.paths[0]
         output_name = os.path.join(dir, video.title)
         video.options['outtmpl'] =  output_name
-        with YoutubeDL(video.options) as ydl:
-            ydl.download([video.url])
+        try:    
+            with YoutubeDL(video.options) as ydl:
+                ydl.download([video.url])
+        except Exception as e:
+            raise BadVideo((e,"unable to download video (bad video),skipping"))
         utils.printColor('v','Dowloaded %s'%video.title)
         if len(video.paths) > 1:
             for path in video.paths[1:]:
@@ -96,8 +107,11 @@ class Downloaders:
         for video in videos:
             options['url'] = video
             print('options avant : ',options)
-            vdobject = Video(options)
-            self.download_video(vdobject)  
+            try:
+                vdobject = Video(options)
+                self.download_video(vdobject)  
+            except(BadVideo):
+                continue
         if len(playlist.paths) > 1:   
             for path in playlist.paths[1:]:
                 ndir = os.path.join(path)
@@ -115,11 +129,17 @@ def playlist_bebou(query,options):
         playlists = dlUtils.get_playlists(query)
     options['url'] = playlists[0]
     PLAYLISTS = []
-    PLAYLISTS.append(Playlist(options))
+    while True:
+        with suppress(BadVideo):
+            PLAYLISTS.append(Playlist(options))
+            break
     i =1
     while True:
         options['url'] = playlists[i]
-        PLAYLISTS.append(Playlist(options))
+        while True:
+            with suppress(BadVideo):
+                PLAYLISTS.append(Playlist(options))
+                break
         pl = PLAYLISTS[0]
         utils.printColor('j',"\t  %s - %s  ----- %d videos"%(pl.auth,pl.title,len(pl.urls)))
         print("\n(next found : %s - %s "%(PLAYLISTS[1].auth,PLAYLISTS[1].title))
@@ -151,11 +171,17 @@ def video_bebou(query,options):
         videos = dlUtils.get_videos(query)
     options['url'] = videos[0]
     VIDEOS = []
-    VIDEOS.append(Video(options))
+    while True:
+        with suppress(BadVideo):
+            VIDEOS.append(Video(options))
+            break
     i =1
     while True:
         options['url'] = videos[i]
-        VIDEOS.append(Video(options))
+        while True:
+            with suppress(BadVideo):
+                VIDEOS.append(Video(options))
+                break
         vd = VIDEOS[0]
         print('\n\n\n%s views - thumbnail/minia : %s'%(vd.views,vd.thumbnail))
         utils.printColor('j',"\t  %s - %s"%(vd.auth,vd.title))
@@ -184,8 +210,10 @@ if __name__ == '__main__':
     VIDEO_KW = config['videoKW']#telecharge l'audio de base
     CHANGE_KW = config['newQueryKW']
     VIDEO_SAVE_DIRECTORIES = config['videoSaveDirs']# ex :local + un chemin vers drive
-    AUDIO_SAVE_DIRECTORIES = config['audioSaveDirs']
+    AUDIO_SAVE_DIRECTORIES = config['audioSaveDirs']# video/audio dirs can be None(null) if not needed (don't want any videos for example)
     utils.forced = config['forceNames']# no spaces no #humour and shit stuff
+    print(AUDIO_SAVE_DIRECTORIES,VIDEO_SAVE_DIRECTORIES)
+    assert (AUDIO_SAVE_DIRECTORIES != [] and VIDEO_SAVE_DIRECTORIES != []),"No directories for video/audio"
     
     utils.printColor('v','\r\n%s'%CHANGE_KW, end='')
     print('             : to change query during dl')
@@ -223,4 +251,4 @@ if __name__ == '__main__':
         else:
             video_bebou(query,options)   
        
-print("Script finished in %d"%utils.tmnow(start))
+print("Script finished in %s"%utils.tmnow(start))
