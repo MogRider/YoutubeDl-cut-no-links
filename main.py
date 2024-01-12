@@ -18,8 +18,7 @@ class Video:
             url : ...
         }
         """
-        
-        print('options apres: ',options)
+       
         self.url = options['url']
         with YoutubeDL({'skip_download': True}) as ydl:
             info = ydl.extract_info(self.url, download=False)
@@ -31,7 +30,6 @@ class Video:
         self.views = int(info.get('view_count'))
         self.options = options['ydloptions']
         self.paths = options['paths']
-        print(options.keys())
         self.format = options['format']
 
 class Playlist:
@@ -70,13 +68,9 @@ class Downloaders:
         pass
 
     def download_video(self,video : Video) -> None:
-        print(video.paths)
         dir = video.paths[0]
-        print('dir:',dir)
         output_name = os.path.join(dir, video.title)
-        print('otn:',output_name)
         video.options['outtmpl'] =  output_name
-        print(video.options)
         with YoutubeDL(video.options) as ydl:
             ydl.download([video.url])#path dans video.options
         utils.printColor('v','Dowloaded %s'%video.title)
@@ -147,12 +141,10 @@ def video_bebou(query,options):
         print(start,end)
         options['ydloptions']['download_ranges'] = download_range_func(chapters=None,ranges=[[start,end]])
         options['ydloptions']['force_keyframes_at_cuts'] = True
-        print(options)
     if 'https' in query:
         videos = [query,None]
     else:
         videos = dlUtils.get_videos(query)
-    #print(videos)
     options['url'] = videos[0]
     VIDEOS = []
     VIDEOS.append(Video(options))
