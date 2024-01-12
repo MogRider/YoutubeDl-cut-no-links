@@ -10,10 +10,10 @@ options (deja toutes par defaut fo regarder):
 
 - videoKW: le mot clé dans l'input pour specifier qu'on recherche une video (mp4 pas mp3)
 
--changeKW: pour changer la demande en cours de route (si marche pas car pas assez precise)
+- changeKW: pour changer la demande en cours de route (si marche pas car pas assez precise)
 
--audio/videoSaveDirs: les dossiers pour l'audio/video (peut etre les memes)
+- audio/videoSaveDirs: les dossiers pour l'audio/video (peut etre les memes)
 
--forceNames: avoir des noms sans espaces et #
+- forceNames: avoir des noms sans espaces et #
 
 installer requirements

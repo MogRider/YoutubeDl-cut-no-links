@@ -5,7 +5,7 @@ import shutil
 import json
 from utils import Utils,PresqueUtiles
 from yt_dlp.utils import download_range_func
-
+from contextlib import suppress
 utils = Utils()
 dlUtils = PresqueUtiles()
 
@@ -27,7 +27,13 @@ class Video:
             str(info.get('title')), ['/', '\\', '?', '*', '>', '<', '|'])
         self.auth = str(info.get('uploader'))
         self.thumbnail = str(info.get('thumbnail'))
-        self.views = int(info.get('view_count'))
+        temp_views = str(info.get('view_count'))
+        print(temp_views)
+        self.views = temp_views[:len(temp_views)%3]+' '
+        for i in range(len(temp_views)%3,len(temp_views),3):
+            with suppress(IndexError):
+                self.views += temp_views[i:i+3]+' '
+        self.views = self.views[:-1]
         self.options = options['ydloptions']
         self.paths = options['paths']
         self.format = options['format']
@@ -126,8 +132,8 @@ def playlist_bebou(query,options):
             i+=1
             continue
         elif resp == CHANGE_KW:
-            nq = input('Enter new playlist name /url \n>>>')
-            playlist_bebou(nq)
+            nq = input('Enter new playlist name /url(no specifier) \n>>>')#ne pas remettre VIDEO_KW etc
+            playlist_bebou(query=nq,options=options)
         downloader.download_playlist(pl)
         break
     
@@ -153,7 +159,7 @@ def video_bebou(query,options):
         options['url'] = videos[i]
         VIDEOS.append(Video(options))
         vd = VIDEOS[0]
-        print('\n\n\n%d views - minia : %s'%(vd.views,vd.thumbnail))
+        print('\n\n\n%s views - minia : %s'%(vd.views,vd.thumbnail))
         utils.printColor('j',"\t  %s - %s"%(vd.auth,vd.title))
         print('(prochaine dans la recherche : %s - %s)'%(VIDEOS[1].auth,VIDEOS[1].title))
         print('\n\t\t Download/ go to next/ change query',end='');utils.printValidation(CHANGE_KW)
@@ -163,8 +169,8 @@ def video_bebou(query,options):
             i+=1
             continue
         elif resp == CHANGE_KW:
-            nq = input('Enter new playlist name /url \n>>>')
-            video_bebou(nq)
+            nq = input('Enter new video name/url(no specifier needed) \n>>>')#ne pas remettre fplaylist ou autre
+            video_bebou(query=nq,options=options)
         else:
             downloader.download_video(vd)
             break
