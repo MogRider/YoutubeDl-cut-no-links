@@ -129,17 +129,21 @@ def playlist_bebou(query,options):
         playlists = dlUtils.get_playlists(query)
     options['url'] = playlists[0]
     PLAYLISTS = []
-    while True:
+    i=-1
+    while i < len(playlists):
+        i+=1
+        options['url'] = playlists[i]
         with suppress(BadVideo):
             PLAYLISTS.append(Playlist(options))
             break
-    i =1
-    while True:
+    i+=1
+    while i < len(playlists):
         options['url'] = playlists[i]
-        while True:
-            with suppress(BadVideo):
-                PLAYLISTS.append(Playlist(options))
-                break
+        try:
+            PLAYLISTS.append(Playlist(options))
+        except BadVideo:
+            i+=1
+            continue
         pl = PLAYLISTS[0]
         utils.printColor('j',"\t  %s - %s  ----- %d videos"%(pl.auth,pl.title,len(pl.urls)))
         print("\n(next found : %s - %s "%(PLAYLISTS[1].auth,PLAYLISTS[1].title))
@@ -171,17 +175,20 @@ def video_bebou(query,options):
         videos = dlUtils.get_videos(query)
     options['url'] = videos[0]
     VIDEOS = []
-    while True:
+    while i < len(videos):
+        i+=1
+        options['url'] = videos[i]
         with suppress(BadVideo):
             VIDEOS.append(Video(options))
             break
     i =1
-    while True:
+    while i < len(videos):
         options['url'] = videos[i]
-        while True:
-            with suppress(BadVideo):
-                VIDEOS.append(Video(options))
-                break
+        try:
+            VIDEOS.append(Video(options))
+        except BadVideo:
+            i+=1
+            continue
         vd = VIDEOS[0]
         print('\n\n\n%s views - thumbnail/minia : %s'%(vd.views,vd.thumbnail))
         utils.printColor('j',"\t  %s - %s"%(vd.auth,vd.title))
