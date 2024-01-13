@@ -166,7 +166,7 @@ def video_bebou(query,options):
         start,end = utils.parse_cut(cut)
         assert start < end,"start must be < to end"
         options['ydloptions']['download_ranges'] = download_range_func(chapters=None,ranges=[[start,end]])
-        options['ydloptions']['force_keyframes_at_cuts'] = True
+        options['ydloptions']['force_keyframes_at_cuts'] = False 
     if 'https' in query:
         videos = [query,None]
     else:
@@ -206,6 +206,51 @@ def video_bebou(query,options):
             break
     
 if __name__ == '__main__':
+    
+    #installing ffmpeg
+    #will not destroy current ffmpeg usage if already installed an dworkin (even if not in path)
+    if 'ffmpeg' not in os.environ['PATH']:
+        utils.printColor('r',"\n\tIs ffmpeg installed and working ?[y/n]")
+        input = str(input('>>>'))
+        if 'n' in input.lower():
+            from ctypes import windll
+            assert windll.shell32.IsUserAnAdmin() != 0, "Must run as admin in order to install ffmpeg"
+            utils.printColor("b","Downloading ffmpeg...\n")
+            
+            from zipfile import ZipFile
+            from io import BytesIO
+            import requests
+           
+            response = requests.get("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip").content
+            zip_file = ZipFile(BytesIO(response))
+            utils.printColor("b","Extracting ffmpeg...\n")
+            zip_file.extractall('')
+            utils.printColor("b","Adding to PATH...\n")
+            time.sleep(5)
+            for file in os.listdir('./'):
+                if 'ffmpeg' in file:
+                    name = file
+                    break
+            path = ';'+str(os.path.join(os.path.dirname(os.path.abspath(__file__)),name,'bin'))
+            programs = os.environ['PATH'].split(';')
+            for i in range(len(programs)):
+                with suppress(IndexError):
+                    if programs[i] in programs[i+1:]:
+                        del programs[i]
+                        print('a')
+            for i in range(len(programs)):
+                if ' ' in programs[i]:
+                    if  not '\'' and not '\"' in programs[i]:
+                        programs[i] = '\'' + programs[i] +'\''
+                        
+            basePATH = ';'.join(programs)
+            command = f"setx PATH \"%s%s\""%(basePATH,path)
+            os.system(command) 
+            utils.printColor('v',"ffmpeg installed and working at %s \n(try ffmpeg in new cmd)"%path[1:])
+            import sys
+            sys.exit("Restart program with new shell")
+    utils.printColor('r',"ffmpeg installed you can now remove line 210 to 251 if you want")
+    
     with open('config.json','r') as f:
         config = json.load(f)
     

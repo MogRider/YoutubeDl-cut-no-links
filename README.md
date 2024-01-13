@@ -1,6 +1,6 @@
 # YoutubeDl-cut-no-links
 YoutubeDl-get cut (or not) videos with no links(or links stv mais bon azi) using yt-dlp and requests
- 
+ <strong>Download ffmpeg<>
 <strong>No-links</strong>
     
     Do a youtube search of the input and will show you the most relavants
@@ -16,7 +16,11 @@ YoutubeDl-get cut (or not) videos with no links(or links stv mais bon azi) using
 <strong>Format</strong>
     
     audio : mp3 (can be long to convert if big video so remove 'prefferedcodec' in options and change mp3 to webm in script if long)
-    mp4 : wbem (long to mp4)
+    mp4 : wbem (long to mp4 but can add options -> 'postprocessors': [{
+        'key': 'FFmpegVideoConvertor',
+        'preferedformat': 'mp4',
+        'preferedquality': '1920x1080',
+    }],) to video_options and change format webm to mp4 in script
 
 <strong>Options</strong> (deja toutes par defaut fo regarder):
 
