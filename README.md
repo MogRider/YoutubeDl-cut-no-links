@@ -1,23 +1,22 @@
 # YoutubeDl-cut-no-links
 YoutubeDl-get cut (or not) videos with no links(or links stv mais bon azi) using yt-dlp and requests
+ 
+<strong>No-links<strong>
+    Do a youtube search of the input and will show you the most relavants
+videos linked to the search (user choose to download or go to the next one in the search)
+    Can also enter a direct link to video/playlist
 
-options (deja toutes par defaut fo regarder):
+<strong>Cut<strong>
+    Get a part of video (can be long if big part):
+    cut(h:m:s / h:m:s) <'video'>
+        start   end (/ not needed)
 
-- audio/video: les options, converti de webm vers mp3 de base et laisse webm pour 
-                les fichiers video car sinon trop long (modifiable : changer 'bv:ba en 'bestvideo+bestaudio/best' dans config pour mp4) 
-- querySep: le separateur pour telecharger plusieurs de suite 
-            (peut faire plusieurs demandes à la suite peut importe le type,le format,le nombre ou si cut)
-- playlistKW: le mot clé dans l'input pour specifier qu'on recherche une playlist
+<strong>Format<strong>
+    audio : mp3 (can be long to convert if big video so remove 'prefferedcodec' in options and change mp3 to webm in script if long)
+    mp4 : wbem (long to mp4)
 
-- videoKW: le mot clé dans l'input pour specifier qu'on recherche une video (wbem pas mp3)
+<strong>options<strong> (deja toutes par defaut fo regarder):
 
-- changeKW: pour changer la demande en cours de route (si marche pas car pas assez precise)
-
-- audio/videoSaveDirs: les dossiers pour l'audio/video (peut etre les memes)
-
-- forceNames: avoir des noms sans espaces(' '->'_') et #
-
-options (already all default just look):
 - audio/video: options, converted from webm to basic mp3 and leaves webm for
                  video files because otherwise too long
                 (editable : change 'bv:ba to 'bestvideo+bestaudio/best' in options to getmp4)
@@ -31,6 +30,6 @@ options (already all default just look):
 
 - audio/videoSaveDirs: folders for audio/video (maybe the same)
 
-- forceNames: have names without spaces(spaces becomes '_') and #
+- forceNames: have names without spaces(spaces become '_') and #
 
-install requirements
+install requirements.txt

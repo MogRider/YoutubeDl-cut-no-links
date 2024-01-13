@@ -33,7 +33,6 @@ class Video:
         self.auth = str(info.get('uploader'))
         self.thumbnail = str(info.get('thumbnail'))
         temp_views = str(info.get('view_count'))
-        print(temp_views)
         self.views = temp_views[:len(temp_views)%3]+' '
         for i in range(len(temp_views)%3,len(temp_views),3):
             with suppress(IndexError):
@@ -100,13 +99,15 @@ class Downloaders:
         videos = playlist.urls
         for i in range (len(playlist.paths)):
             playlist.paths[i] =  os.path.join(playlist.paths[i],playlist.title)
-        print(playlist.paths)
         base_path = playlist.paths[0]
-        options = {'ydloptions' : utils.merge_dicos(playlist.options,{'outtmpl' : base_path},subdict=False), 'paths' : [base_path]}
+        options = {
+            'ydloptions' : utils.merge_dicos(playlist.options,{'outtmpl' : base_path},subdict=False), 
+            'paths' : [base_path],
+            'format' : playlist.format
+        }
         os.makedirs(base_path)
         for video in videos:
             options['url'] = video
-            print('options avant : ',options)
             try:
                 vdobject = Video(options)
                 self.download_video(vdobject)  
@@ -163,10 +164,7 @@ def video_bebou(query,options):
     if 'cut(' in query:
         cut,query = query.split(')')[:2]
         start,end = utils.parse_cut(cut)
-        print(start,end)
-        start,end = utils.convsec(start),utils.convsec(end)
         assert start < end,"start must be < to end"
-        print(start,end)
         options['ydloptions']['download_ranges'] = download_range_func(chapters=None,ranges=[[start,end]])
         options['ydloptions']['force_keyframes_at_cuts'] = True
     if 'https' in query:
@@ -175,6 +173,7 @@ def video_bebou(query,options):
         videos = dlUtils.get_videos(query)
     options['url'] = videos[0]
     VIDEOS = []
+    i=-1
     while i < len(videos):
         i+=1
         options['url'] = videos[i]
@@ -219,7 +218,6 @@ if __name__ == '__main__':
     VIDEO_SAVE_DIRECTORIES = config['videoSaveDirs']# ex :local + un chemin vers drive
     AUDIO_SAVE_DIRECTORIES = config['audioSaveDirs']# video/audio dirs can be None(null) if not needed (don't want any videos for example)
     utils.forced = config['forceNames']# no spaces no #humour and shit stuff
-    print(AUDIO_SAVE_DIRECTORIES,VIDEO_SAVE_DIRECTORIES)
     assert (AUDIO_SAVE_DIRECTORIES != [] and VIDEO_SAVE_DIRECTORIES != []),"No directories for video/audio"
     
     utils.printColor('v','\r\n%s'%CHANGE_KW, end='')

@@ -100,9 +100,10 @@ class Utils:
                     dico[clé] = dic[clé]
         return dico
     
-    @staticmethod
-    def parse_cut(query):
+    
+    def parse_cut(self,query):
         start,end =  re.findall(r'\b(?:\d+:\d+:\d+|\d+(?::\d+)?(?::\d+)?)\b',query)[:2]
+        start,end = self.convsec(start),self.convsec(end)
         return start,end
 
 utils = Utils()
