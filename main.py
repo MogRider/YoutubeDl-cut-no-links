@@ -166,7 +166,8 @@ def video_bebou(query,options):
         start,end = utils.parse_cut(cut)
         assert start < end,"start must be < to end"
         options['ydloptions']['download_ranges'] = download_range_func(chapters=None,ranges=[[start,end]])
-        options['ydloptions']['force_keyframes_at_cuts'] = False 
+        options['ydloptions']['force_keyframes_at_cuts'] = True
+ 
     if 'https' in query:
         videos = [query,None]
     else:
