@@ -181,7 +181,7 @@ def video_bebou(query,options):
         with suppress(BadVideo):
             VIDEOS.append(Video(options))
             break
-    i =1
+    i +=1
     while i < len(videos):
         options['url'] = videos[i]
         try:
