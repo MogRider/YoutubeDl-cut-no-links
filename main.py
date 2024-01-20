@@ -29,7 +29,7 @@ class Video:
         except Exception as e:
             raise BadVideo((e,"unable to extract infos (bad video),skipping"))
         self.title = utils.check_letters(
-            str(info.get('title')), ['/', '\\', '?', '*', '>', '<', '|'])
+            str(info.get('title')), ['/', '\\', '?', '*', '>', '<', '|',':','.'])
         self.auth = str(info.get('uploader'))
         self.thumbnail = str(info.get('thumbnail'))
         temp_views = str(info.get('view_count'))
@@ -69,7 +69,7 @@ class Playlist:
             print("Aucune vidéo trouvée dans la playlist.")
             return False
         self.title = utils.check_letters(
-            str(info.get('title')), ['/', '\\', '?', '*', '>', '<', '|'])
+            str(info.get('title')), ['/', '\\', '?', '*', '>', '<', '|',':','.'])
         self.auth = str(info.get('uploader'))
         self.options = options['ydloptions']
         self.paths = options['paths']
